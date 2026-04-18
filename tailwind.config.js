@@ -4,13 +4,45 @@ export default {
   theme: {
     extend: {
       colors: {
-        /* ── JIL Brand colours (from logo SVG) ───────────────── */
+        /* ── Override indigo → JIL Blue (#0061AF) ────────────────
+           Every component using indigo-* classes automatically
+           picks up the JIL corporate blue from the logo.        */
+        indigo: {
+          50:  '#e6f1fa',
+          100: '#c0d8f2',
+          200: '#8cb5e6',
+          300: '#5592d9',
+          400: '#2d74cc',
+          500: '#0061AF',
+          600: '#004f8e',
+          700: '#003d6e',
+          800: '#002b4e',
+          900: '#001a2f',
+          950: '#000d1a',
+        },
+        /* ── Override purple → JIL Green (#A6CE39) ───────────────
+           Components pairing indigo+purple will now show the two
+           logo colours side by side.                            */
+        purple: {
+          50:  '#f4fbea',
+          100: '#e5f5c4',
+          200: '#ccec90',
+          300: '#b3e25b',
+          400: '#A6CE39',
+          500: '#8ab52e',
+          600: '#6f9224',
+          700: '#52701a',
+          800: '#3a5113',
+          900: '#26350b',
+          950: '#192309',
+        },
+        /* ── JIL brand aliases (explicit usage) ──────────────────── */
         jilGreen: {
           50:  '#f4fbea',
           100: '#e5f5c4',
           200: '#ccec90',
           300: '#b3e25b',
-          400: '#A6CE39',  /* logo green — primary */
+          400: '#A6CE39',
           500: '#8ab52e',
           600: '#6f9224',
           700: '#52701a',
@@ -23,7 +55,7 @@ export default {
           200: '#8cb5e6',
           300: '#5592d9',
           400: '#2d74cc',
-          500: '#0061AF',  /* logo blue — primary */
+          500: '#0061AF',
           600: '#004f8e',
           700: '#003d6e',
           800: '#002b4e',
@@ -41,7 +73,7 @@ export default {
           700: '#b45309',
           900: '#78350f',
         },
-        /* ── Navy (deep background, hero) ───────────────────────── */
+        /* ── Navy (deep backgrounds, hero) ──────────────────────── */
         navy: {
           50:  '#e8edf5',
           100: '#c5d0e4',
@@ -64,15 +96,15 @@ export default {
           700: '#047857',
           900: '#064e3b',
         },
-        /* ── Legacy brand (kept for employee portal components) ─── */
+        /* ── brand → JIL Blue (legacy alias) ────────────────────── */
         brand: {
-          50:  '#eef2ff',
-          100: '#e0e7ff',
-          400: '#818cf8',
-          500: '#6366f1',
-          600: '#4f46e5',
-          700: '#4338ca',
-          900: '#312e81',
+          50:  '#e6f1fa',
+          100: '#c0d8f2',
+          400: '#2d74cc',
+          500: '#0061AF',
+          600: '#004f8e',
+          700: '#003d6e',
+          900: '#001a2f',
         },
       },
       animation: {
@@ -114,9 +146,8 @@ export default {
         'glow-solar':   '0 0 30px rgba(245,158,11,0.4)',
         'glow-leaf':    '0 0 30px rgba(16,185,129,0.35)',
         'glow-navy':    '0 0 30px rgba(30,58,95,0.4)',
-        'glow-indigo':  '0 0 30px rgba(99,102,241,0.35)',
-        'glow-purple':  '0 0 30px rgba(124,58,237,0.35)',
-        'glow-cyan':    '0 0 30px rgba(6,182,212,0.35)',
+        'glow-indigo':  '0 0 24px rgba(0,97,175,0.30)',
+        'glow-purple':  '0 0 24px rgba(166,206,57,0.35)',
         'glow-jilBlue': '0 0 24px rgba(0,97,175,0.30)',
         'card':         '0 2px 12px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04)',
         'card-hover':   '0 8px 32px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.06)',
