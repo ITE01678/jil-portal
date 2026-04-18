@@ -169,21 +169,23 @@ export default function OnlineUsers() {
               ) : presenceError === "consent" ? (
                 <div className="text-center space-y-1.5">
                   <p className="text-[10px] text-amber-600 dark:text-amber-400 font-semibold">
-                    ⚠ This browser only — cross-device requires admin consent
+                    ⚠ This browser only — cross-device unavailable
                   </p>
                   <p className="text-[10px] text-slate-500 dark:text-slate-400">
-                    Ask your M365 Global Admin to grant{" "}
-                    <span className="font-mono">Sites.ReadWrite.All</span>:
+                    If admin consent was already granted, sign out and sign back in to activate cross-device presence.
                   </p>
-                  <a
-                    href={adminConsentUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-block text-[10px] text-indigo-600 dark:text-indigo-400 font-semibold underline underline-offset-2 hover:text-indigo-800 break-all"
-                    onClick={e => e.stopPropagation()}
-                  >
-                    Grant admin consent →
-                  </a>
+                  <p className="text-[10px] text-slate-400">
+                    Otherwise, ask your M365 Admin to{" "}
+                    <a
+                      href={adminConsentUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-indigo-600 dark:text-indigo-400 font-semibold underline underline-offset-1 hover:text-indigo-800"
+                      onClick={e => e.stopPropagation()}
+                    >
+                      grant Sites.ReadWrite.All →
+                    </a>
+                  </p>
                 </div>
               ) : (
                 <p className="text-[10px] text-slate-400 text-center">

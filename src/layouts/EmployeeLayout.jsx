@@ -11,7 +11,7 @@ export default function EmployeeLayout() {
 
   return (
     <PresenceProvider>
-      <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-[#0d1117]">
+      <div className="min-h-screen flex flex-col bg-[#f0f5fb] dark:bg-[#0d1117]">
         <Header
           isPublic={false}
           sidebarOpen={sidebarOpen}

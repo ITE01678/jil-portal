@@ -28,7 +28,8 @@ import {
 import { useMsal } from "@azure/msal-react";
 import { PresenceService } from "../services/presenceService";
 import { SHAREPOINT_CONFIG } from "../../azure-app-registration/sharepointConfig";
-import { AZURE_CREDENTIALS } from "../../azure-app-registration/azureConfig";
+import { AZURE_CREDENTIALS, graphRequest } from "../../azure-app-registration/azureConfig";
+import { msalInstance } from "../../azure-app-registration/msalInstance";
 
 /* ── Config ─────────────────────────────────────────────────────────── */
 const SHAREPOINT_READY = SHAREPOINT_CONFIG.siteId !== "REPLACE_WITH_SITE_ID";
@@ -191,7 +192,8 @@ export function PresenceProvider({ children }) {
 
   const graphJoin = useCallback(async () => {
     if (!account) return;
-    try {
+
+    const doJoin = async () => {
       const itemId = await PresenceService.join({
         name:       account.name ?? account.username,
         upn:        account.username,
@@ -200,14 +202,27 @@ export function PresenceProvider({ children }) {
       });
       listItemIdRef.current = itemId;
       setIsLivePresence(true);
-      // Best-effort cleanup of stale rows from previous sessions
       PresenceService.pruneStale().catch(() => {});
+    };
+
+    try {
+      await doJoin();
     } catch (err) {
-      const is403 = err.message.includes("[Graph 403]");
-      if (is403) {
+      if (err.message.includes("[Graph 403]")) {
+        // Token may be stale (admin consent was granted after login) — force-refresh and retry once
+        try {
+          await msalInstance.acquireTokenSilent({
+            scopes: graphRequest.scopes,
+            account,
+            forceRefresh: true,
+          });
+          await doJoin();
+          return; // succeeded after token refresh
+        } catch { /* fall through to localStorage */ }
+
         console.error(
-          `[Presence] Admin consent required for Sites.ReadWrite.All.\n` +
-          `Ask your M365 Global Admin to open this URL and click Accept:\n${adminConsentUrl}`
+          `[Presence] 403 from SharePoint even after token refresh.\n` +
+          `Admin consent URL: ${adminConsentUrl}`
         );
         setPresenceError("consent");
       } else {
@@ -217,7 +232,7 @@ export function PresenceProvider({ children }) {
       setIsLivePresence(false);
       localHeartbeat();
     }
-  }, [account, localHeartbeat]);
+  }, [account, localHeartbeat, adminConsentUrl]);
 
   const graphHeartbeat = useCallback(async () => {
     if (!listItemIdRef.current) return;

@@ -60,10 +60,10 @@ export default function Header({ isPublic, onToggleSidebar }) {
   return (
     <header className="
       fixed top-0 left-0 right-0 z-50 h-16
-      bg-white/95 dark:bg-[#010c1e]/97 backdrop-blur-xl
-      border-b border-slate-200 dark:border-[#0f2035]/90
+      bg-white dark:bg-[#010c1e]/97 backdrop-blur-xl
+      border-b-2 border-[#0061AF]/20 dark:border-[#0f2035]/90
       flex items-center px-4 gap-3
-      shadow-[0_1px_12px_rgba(0,97,175,0.08)] dark:shadow-[0_2px_16px_rgba(0,0,0,0.4)]
+      shadow-[0_2px_16px_rgba(0,97,175,0.10)] dark:shadow-[0_2px_16px_rgba(0,0,0,0.4)]
     ">
       {/* Sidebar toggle — employee only */}
       {!isPublic && (

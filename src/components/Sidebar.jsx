@@ -64,14 +64,14 @@ export default function Sidebar({ isOpen }) {
       transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
       className="
         fixed left-0 z-40 flex flex-col overflow-hidden
-        bg-white dark:bg-slate-900
-        border-r border-slate-200/80 dark:border-slate-700/60
-        shadow-lg
+        bg-[#003d6e] dark:bg-slate-900
+        border-r border-[#002b4e]/60 dark:border-slate-700/60
+        shadow-xl
       "
       style={{ top: "var(--header-h, 64px)", height: "calc(100vh - 64px)" }}
     >
-      {/* Decorative gradient strip */}
-      <div className="h-0.5 w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-500 flex-shrink-0" />
+      {/* JIL green accent stripe */}
+      <div className="h-0.5 w-full bg-gradient-to-r from-[#A6CE39] via-[#A6CE39]/60 to-transparent flex-shrink-0" />
 
       {/* Section label */}
       <div className="px-4 pt-5 pb-2 flex-shrink-0 overflow-hidden">
@@ -84,7 +84,7 @@ export default function Sidebar({ isOpen }) {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.15 }}
               className="text-[10px] font-bold uppercase tracking-widest
-                         text-slate-400 dark:text-slate-500 px-2"
+                         text-white/50 dark:text-slate-500 px-2"
             >
               Menu
             </motion.p>
@@ -104,10 +104,7 @@ export default function Sidebar({ isOpen }) {
             }
           >
             {/* Icon */}
-            <span className={`flex-shrink-0 transition-colors duration-200 ${
-              /* colour tint on icon always visible */
-              "text-slate-500 dark:text-slate-400"
-            }`}>
+            <span className="flex-shrink-0 transition-colors duration-200 text-white/70 dark:text-slate-400">
               {item.icon}
             </span>
 
@@ -131,13 +128,13 @@ export default function Sidebar({ isOpen }) {
       </nav>
 
       {/* Bottom: back to home link */}
-      <div className="px-2.5 pb-4 pt-2 border-t border-slate-200/60 dark:border-slate-700/50 flex-shrink-0">
+      <div className="px-2.5 pb-4 pt-2 border-t border-white/10 dark:border-slate-700/50 flex-shrink-0">
         <NavLink
           to="/"
           title={!isOpen ? "Back to Home" : undefined}
           className="sidebar-link"
         >
-          <span className="flex-shrink-0 text-slate-400">{icons.home}</span>
+          <span className="flex-shrink-0 text-white/50 dark:text-slate-400">{icons.home}</span>
           <AnimatePresence>
             {isOpen && (
               <motion.span
