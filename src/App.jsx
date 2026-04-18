@@ -23,7 +23,7 @@ import Infrastructure from "./pages/Infrastructure";
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Routes>
 
         {/* ── PUBLIC — accessible by everyone, no auth ─────────────── */}
