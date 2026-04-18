@@ -1,0 +1,4 @@
+{
+ "routes":[{"route":"/employee/*","allowedRoles":["authenticated"]}],
+ "navigationFallback":{"rewrite":"/index.html"}
+}
