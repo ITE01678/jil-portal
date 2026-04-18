@@ -28,6 +28,7 @@ import {
 import { useMsal } from "@azure/msal-react";
 import { PresenceService } from "../services/presenceService";
 import { SHAREPOINT_CONFIG } from "../../azure-app-registration/sharepointConfig";
+import { AZURE_CREDENTIALS } from "../../azure-app-registration/azureConfig";
 
 /* ── Config ─────────────────────────────────────────────────────────── */
 const SHAREPOINT_READY = SHAREPOINT_CONFIG.siteId !== "REPLACE_WITH_SITE_ID";
@@ -87,6 +88,8 @@ const PresenceContext = createContext({
   onlineUsers:    [],
   currentUserId:  null,
   isLivePresence: false,
+  presenceError:  null,
+  adminConsentUrl: null,
 });
 
 export function PresenceProvider({ children }) {
@@ -100,6 +103,12 @@ export function PresenceProvider({ children }) {
 
   /* Whether to use the Graph-based presence (cross-device) */
   const useGraphPresence = SHAREPOINT_READY && !!account;
+
+  /* Admin consent URL — shown in UI when Graph calls return 403 */
+  const adminConsentUrl = (() => {
+    const { tenantId, clientId, redirectUri } = AZURE_CREDENTIALS;
+    return `https://login.microsoftonline.com/${tenantId}/adminconsent?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}`;
+  })();
 
   /**
    * Build a self-entry object immediately from MSAL account data.
@@ -124,6 +133,7 @@ export function PresenceProvider({ children }) {
     return self ? [self] : [];
   });
   const [isLivePresence, setIsLivePresence] = useState(false);
+  const [presenceError,  setPresenceError]  = useState(null); // null | "consent" | "error"
 
   /* ── FALLBACK (localStorage) callbacks ──────────────────────────────
      Defined BEFORE graphJoin so graphJoin can call localHeartbeat()
@@ -193,9 +203,18 @@ export function PresenceProvider({ children }) {
       // Best-effort cleanup of stale rows from previous sessions
       PresenceService.pruneStale().catch(() => {});
     } catch (err) {
-      console.warn("[Presence] SharePoint join failed, using localStorage fallback:", err.message);
+      const is403 = err.message.includes("[Graph 403]");
+      if (is403) {
+        console.error(
+          `[Presence] Admin consent required for Sites.ReadWrite.All.\n` +
+          `Ask your M365 Global Admin to open this URL and click Accept:\n${adminConsentUrl}`
+        );
+        setPresenceError("consent");
+      } else {
+        console.warn("[Presence] SharePoint join failed:", err.message);
+        setPresenceError("error");
+      }
       setIsLivePresence(false);
-      // ← Start localStorage fallback so onlineUsers is never left empty
       localHeartbeat();
     }
   }, [account, localHeartbeat]);
@@ -292,7 +311,7 @@ export function PresenceProvider({ children }) {
     : account?.localAccountId;      // Local: match by MSAL localAccountId
 
   return (
-    <PresenceContext.Provider value={{ onlineUsers, currentUserId, isLivePresence }}>
+    <PresenceContext.Provider value={{ onlineUsers, currentUserId, isLivePresence, presenceError, adminConsentUrl }}>
       {children}
     </PresenceContext.Provider>
   );

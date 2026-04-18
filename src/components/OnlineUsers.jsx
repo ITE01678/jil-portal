@@ -30,7 +30,7 @@ function Avatar({ user, isSelf, size = "sm" }) {
 
 /* ══════════════════════════════════════════════════════════════════════ */
 export default function OnlineUsers() {
-  const { onlineUsers, currentUserId, isLivePresence } = usePresence();
+  const { onlineUsers, currentUserId, isLivePresence, presenceError, adminConsentUrl } = usePresence();
   const [open, setOpen] = useState(false);
   const ref  = useRef(null);
 
@@ -74,10 +74,14 @@ export default function OnlineUsers() {
 
         {/* Pulse dot + count */}
         <div className="flex items-center gap-1.5">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-          </span>
+          {isLivePresence ? (
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+            </span>
+          ) : (
+            <span className="text-amber-500 text-xs leading-none" title="This browser only — cross-device unavailable">⚠</span>
+          )}
           <span className="text-xs font-semibold text-slate-600 dark:text-slate-300 hidden sm:block whitespace-nowrap">
             {onlineCount === 1 && onlineCount === onlineUsers.length
               ? "Just you"
@@ -154,14 +158,33 @@ export default function OnlineUsers() {
             </div>
 
             {/* Footer note */}
-            <div className="px-4 py-2.5 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 flex items-center justify-center gap-1.5">
+            <div className="px-4 py-2.5 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30">
               {isLivePresence ? (
-                <>
+                <div className="flex items-center justify-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0" />
                   <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">
                     Live · all devices · updates every 60s
                   </p>
-                </>
+                </div>
+              ) : presenceError === "consent" ? (
+                <div className="text-center space-y-1.5">
+                  <p className="text-[10px] text-amber-600 dark:text-amber-400 font-semibold">
+                    ⚠ This browser only — cross-device requires admin consent
+                  </p>
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400">
+                    Ask your M365 Global Admin to grant{" "}
+                    <span className="font-mono">Sites.ReadWrite.All</span>:
+                  </p>
+                  <a
+                    href={adminConsentUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-block text-[10px] text-indigo-600 dark:text-indigo-400 font-semibold underline underline-offset-2 hover:text-indigo-800 break-all"
+                    onClick={e => e.stopPropagation()}
+                  >
+                    Grant admin consent →
+                  </a>
+                </div>
               ) : (
                 <p className="text-[10px] text-slate-400 text-center">
                   This browser only · configure SharePoint for cross-device
