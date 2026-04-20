@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>JIL Portal</title>
+  <!--
+    GitHub Pages SPA redirect.
+    When GitHub Pages 404s on a deep path (e.g. /jil-portal/employee/dashboard),
+    it serves this file. We save the full URL and redirect back to the app root.
+    index.html then restores the path via history.replaceState before React boots.
+
+    Works for:
+      - Project pages:  https://user.github.io/repo-name/some/path
+      - Root site:      https://user.github.io/some/path
+  -->
+  <script>
+    (function () {
+      sessionStorage.setItem("gh-pages-redirect", window.location.href);
+      // Determine base path:
+      //   GitHub project pages → first path segment is the repo name → base = /repo/
+      //   GitHub root site     → pathname starts with the actual route → base = /
+      // We redirect back to the base so index.html loads and restores the path.
+      var segs = window.location.pathname.replace(/\/$/, "").split("/");
+      // segs[0] is always "" (leading slash).  segs[1] is repo name (project) or route (root).
+      // If the first real segment looks like a repo name (no dots, not a route keyword),
+      // we check if there is a level-2 segment — if so, it's a project page.
+      var base = segs.length > 2 ? "/" + segs[1] + "/" : "/";
+      window.location.replace(window.location.origin + base);
+    }());
+  </script>
+</head>
+<body></body>
+</html>
