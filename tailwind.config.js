@@ -116,6 +116,8 @@ export default {
         'shimmer':       'shimmer 2s linear infinite',
         'spin-slow':     'spin 8s linear infinite',
         'solar-rotate':  'spin 20s linear infinite',
+        'marquee':       'marquee 40s linear infinite',
+        'marquee-rev':   'marqueeRev 40s linear infinite',
       },
       keyframes: {
         fadeUp: {
@@ -137,6 +139,14 @@ export default {
         shimmer: {
           '0%':   { backgroundPosition: '-200% 0' },
           '100%': { backgroundPosition:  '200% 0' },
+        },
+        marquee: {
+          '0%':   { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
+        marqueeRev: {
+          '0%':   { transform: 'translateX(-50%)' },
+          '100%': { transform: 'translateX(0)' },
         },
       },
       transitionTimingFunction: {

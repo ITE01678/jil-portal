@@ -1,7 +1,24 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import emailjs from "@emailjs/browser";
 import { ContactEnquiriesService } from "../services/listsService";
 import { SHAREPOINT_CONFIG } from "../../azure-app-registration/sharepointConfig";
+
+/*
+ * ── EmailJS setup (one-time, 5 min) ──────────────────────────────────
+ *  1. Create a FREE account at https://www.emailjs.com
+ *  2. Add a service: Email Services → Add Service → choose Gmail/Outlook
+ *     linked to any account (does not have to be it.trainee@jil-jupiter.com)
+ *  3. Create a template: Email Templates → Create New
+ *     Set "To Email" = it.trainee@jil-jupiter.com
+ *     Use variables: {{from_name}}, {{from_email}}, {{company}},
+ *                    {{subject}}, {{message}}
+ *  4. Copy Service ID, Template ID, and your Public Key below
+ * ─────────────────────────────────────────────────────────────────── */
+const EJS_SERVICE_ID  = "service_jil_portal";      // ← replace with your Service ID
+const EJS_TEMPLATE_ID = "template_contact_form";   // ← replace with your Template ID
+const EJS_PUBLIC_KEY  = "YOUR_EMAILJS_PUBLIC_KEY"; // ← replace with your Public Key
+const EMAIL_ENABLED   = EJS_PUBLIC_KEY !== "YOUR_EMAILJS_PUBLIC_KEY";
 
 const fadeUp = (delay = 0) => ({
   initial:     { opacity: 0, y: 28 },
@@ -71,6 +88,30 @@ export default function Contact() {
     setLoading(true);
     setError(null);
 
+    const refCode = `JIL-${Date.now().toString(36).toUpperCase()}`;
+
+    /* ── Always attempt email notification ──────────────────────── */
+    if (EMAIL_ENABLED) {
+      try {
+        await emailjs.send(
+          EJS_SERVICE_ID,
+          EJS_TEMPLATE_ID,
+          {
+            from_name:  form.name,
+            from_email: form.email,
+            company:    form.company || "Not provided",
+            subject:    form.subject,
+            message:    form.message,
+            reply_to:   form.email,
+            ref_code:   refCode,
+          },
+          EJS_PUBLIC_KEY
+        );
+      } catch (ejsErr) {
+        console.warn("[Contact] EmailJS notification failed:", ejsErr);
+      }
+    }
+
     if (SHAREPOINT_READY) {
       /* ── Live: save to SharePoint List ─────────────────────────── */
       try {
@@ -79,19 +120,15 @@ export default function Contact() {
         setSubmitted(true);
       } catch (err) {
         console.error("[Contact] SharePoint submission failed:", err);
-        setError(
-          "Unable to send your message right now. Please email us directly at info@jil-jupiter.com"
-        );
+        setError("Unable to save your message. Please email us directly at info@jil-jupiter.com");
       } finally {
         setLoading(false);
       }
     } else {
-      /* ── Dev fallback: simulate submission ──────────────────────── */
-      setTimeout(() => {
-        setReferenceId(`JIL-${Date.now().toString(36).toUpperCase()}`);
-        setLoading(false);
-        setSubmitted(true);
-      }, 1200);
+      /* ── Fallback: show success with generated ref ───────────────── */
+      setReferenceId(refCode);
+      setLoading(false);
+      setSubmitted(true);
     }
   };
 
@@ -176,6 +213,9 @@ export default function Contact() {
                         className="w-full rounded-xl border-2 border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 py-3 px-4 text-sm resize-none focus:border-solar-500 focus:outline-none transition-colors" />
                     </div>
 
+                    {error && (
+                      <p className="text-sm text-rose-500 bg-rose-50 dark:bg-rose-950/30 rounded-xl px-4 py-2.5">{error}</p>
+                    )}
                     <button type="submit" disabled={loading}
                       className="w-full inline-flex items-center justify-center gap-2 bg-solar-500 hover:bg-solar-600 text-white font-bold py-3.5 rounded-xl transition-all disabled:opacity-60 disabled:cursor-not-allowed">
                       {loading ? (

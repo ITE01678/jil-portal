@@ -1,6 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import Chart from "chart.js/auto";
+import { AwardsService, NewsActivitiesService, LeaderboardService } from "../../services/listsService";
+import { SHAREPOINT_CONFIG } from "../../../azure-app-registration/sharepointConfig";
+
+const SP_READY = SHAREPOINT_CONFIG.siteId !== "REPLACE_WITH_SITE_ID";
 
 const KPI = [
   {
@@ -57,6 +61,26 @@ const fadeUp = (delay = 0) => ({
 export default function Dashboard() {
   const canvasRef = useRef(null);
   const chartRef  = useRef(null);
+
+  const [leaderboard, setLeaderboard] = useState([]);
+  const [awards,      setAwards]      = useState([]);
+  const [newsItems,   setNewsItems]   = useState([]);
+  const [spLoading,   setSpLoading]   = useState(SP_READY);
+
+  useEffect(() => {
+    if (!SP_READY) return;
+    Promise.all([
+      LeaderboardService.getAll(10),
+      AwardsService.getAll(),
+      NewsActivitiesService.getAll(),
+    ]).then(([lb, aw, ni]) => {
+      setLeaderboard(lb);
+      setAwards(aw.slice(0, 6));
+      setNewsItems(ni.slice(0, 6));
+    }).catch(err => {
+      console.warn("[Dashboard] SharePoint fetch failed:", err);
+    }).finally(() => setSpLoading(false));
+  }, []);
 
   useEffect(() => {
     if (chartRef.current) { chartRef.current.destroy(); }
@@ -196,6 +220,124 @@ export default function Dashboard() {
         </motion.div>
 
       </div>
+
+      {/* ── SharePoint Live Data ─────────────────────────────────────── */}
+      {SP_READY && (
+        <div className="space-y-6">
+          <motion.div {...fadeUp(0.45)}>
+            <h2 className="text-xl font-bold tracking-tight">Live Portal Data</h2>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Read from SharePoint — view only</p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            {/* ── JIL Leaderboard ──────────────────────────────────── */}
+            <motion.div {...fadeUp(0.5)} className="card">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-bold text-base flex items-center gap-2">🏆 JIL Leaderboard</h3>
+                <span className="stat-badge text-amber-600 bg-amber-50 dark:bg-amber-950/30">Top 10</span>
+              </div>
+              {spLoading ? (
+                <SpinnerRows />
+              ) : leaderboard.length === 0 ? (
+                <EmptyState label="No scores yet" />
+              ) : (
+                <div className="space-y-2">
+                  {leaderboard.map((row, i) => (
+                    <div key={row._id ?? i} className="flex items-center gap-3 py-1.5">
+                      <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-extrabold flex-shrink-0 ${
+                        i === 0 ? "bg-amber-400 text-white" :
+                        i === 1 ? "bg-slate-300 dark:bg-slate-600 text-slate-700 dark:text-slate-200" :
+                        i === 2 ? "bg-amber-700 text-white" :
+                                  "bg-slate-100 dark:bg-slate-700 text-slate-500"
+                      }`}>{i + 1}</span>
+                      <span className="flex-1 text-sm font-medium truncate">{row.Title ?? row.name}</span>
+                      <div className="text-right flex-shrink-0">
+                        <p className="text-xs font-bold text-indigo-600 dark:text-indigo-400">{row.Score ?? 0} pts</p>
+                        <p className="text-[10px] text-slate-400">Lv {row.Level ?? 1}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+
+            {/* ── JIL Awards ───────────────────────────────────────── */}
+            <motion.div {...fadeUp(0.55)} className="card">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-bold text-base flex items-center gap-2">🎖️ JIL Awards</h3>
+                <span className="stat-badge text-solar-600 bg-solar-50 dark:bg-solar-950/30">Recent</span>
+              </div>
+              {spLoading ? (
+                <SpinnerRows />
+              ) : awards.length === 0 ? (
+                <EmptyState label="No awards added yet" />
+              ) : (
+                <div className="space-y-3">
+                  {awards.map((a, i) => (
+                    <div key={a._id ?? i} className="flex items-start gap-3">
+                      <span className="text-xl flex-shrink-0 leading-none mt-0.5">{a.Icon ?? "🏆"}</span>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold truncate leading-snug">{a.Title}</p>
+                        <p className="text-[11px] text-slate-400 truncate">{a.Organization} · {a.Year}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+
+            {/* ── JIL News & Activities ────────────────────────────── */}
+            <motion.div {...fadeUp(0.6)} className="card">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-bold text-base flex items-center gap-2">📰 News &amp; Activities</h3>
+                <span className="stat-badge text-leaf-600 bg-leaf-50 dark:bg-leaf-950/30">Latest</span>
+              </div>
+              {spLoading ? (
+                <SpinnerRows />
+              ) : newsItems.length === 0 ? (
+                <EmptyState label="No items added yet" />
+              ) : (
+                <div className="space-y-3">
+                  {newsItems.map((item, i) => (
+                    <div key={item._id ?? i} className="flex items-start gap-3 py-1">
+                      <span className="text-lg flex-shrink-0 leading-none mt-0.5">{item.Icon ?? (item.jType === "Activity" ? "🎉" : "📰")}</span>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate leading-snug">{item.Title}</p>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">{item.jType}</span>
+                          {item.PublishDate && (
+                            <span className="text-[10px] text-slate-400">
+                              {new Date(item.PublishDate).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+
+          </div>
+        </div>
+      )}
     </div>
+  );
+}
+
+function SpinnerRows() {
+  return (
+    <div className="space-y-2.5 animate-pulse">
+      {[...Array(4)].map((_, i) => (
+        <div key={i} className="h-7 rounded-lg bg-slate-100 dark:bg-slate-700/50" />
+      ))}
+    </div>
+  );
+}
+
+function EmptyState({ label }) {
+  return (
+    <p className="text-sm text-slate-400 text-center py-6">{label}</p>
   );
 }

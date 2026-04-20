@@ -34,6 +34,39 @@ const MILESTONES = [
   { year: "2025", event: "Commissioning Bhubaneswar 4 GW cell + 2.8 GW module facility. Swept 3 wins at India Solar Week 2026 — Technology of Year, Project of Year, and Women Leader in Clean Energy." },
 ];
 
+const CLIENT_ROW_1 = [
+  { name: "Waaree Energies",          emoji: "☀️" },
+  { name: "Premier Energies",         emoji: "⚡" },
+  { name: "Vikram Solar",             emoji: "🌞" },
+  { name: "Adani Solar",              emoji: "🏭" },
+  { name: "Tata Power Solar",         emoji: "🔆" },
+  { name: "Sterling & Wilson Solar",  emoji: "🌱" },
+  { name: "Jakson Group",             emoji: "💡" },
+  { name: "Rays Power Experts",       emoji: "🌤️" },
+  { name: "Avaada Energy",            emoji: "♻️" },
+];
+
+const CLIENT_ROW_2 = [
+  { name: "SECI",                     emoji: "🏛️" },
+  { name: "NTPC Renewable Energy",    emoji: "⚙️" },
+  { name: "Hero Future Energies",     emoji: "🦾" },
+  { name: "ReNew Power",              emoji: "🔋" },
+  { name: "Azure Power",              emoji: "☁️" },
+  { name: "CleanMax Solar",           emoji: "🌿" },
+  { name: "Greenko Group",            emoji: "🍃" },
+  { name: "Fourth Partner Energy",    emoji: "🤝" },
+  { name: "Amp Energy",               emoji: "⚡" },
+];
+
+function ClientChip({ label, emoji }) {
+  return (
+    <span className="inline-flex items-center gap-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/60 px-5 py-3 rounded-xl shadow-sm text-sm font-semibold text-slate-700 dark:text-slate-200 whitespace-nowrap flex-shrink-0 select-none">
+      <span className="text-base leading-none">{emoji}</span>
+      {label}
+    </span>
+  );
+}
+
 export default function About() {
   return (
     <div>
@@ -247,38 +280,42 @@ export default function About() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
             {[
               {
-                initials: "MD", name: "Founder & MD",
+                name: "Founder &amp; Managing Director",
+                role: "Executive Leadership",
                 grad: "from-navy-700 to-navy-500",
-                bio: "Visionary founder who built Jupiter International from a 30 MW startup in 2009 to India's largest pure-play solar cell manufacturer at 0.96 GW — driving India's solar manufacturing revolution.",
-                badge: "Executive Leadership",
+                bio: "Visionary founder who built Jupiter International from a 30 MW startup in 2009 to India's largest pure-play solar cell manufacturer at 0.96 GW.",
               },
               {
-                initials: "KRC", name: "Kasturi Roy Choudhury",
+                name: "Kasturi Roy Choudhury",
+                role: "Chief Human Resources Officer",
                 grad: "from-purple-600 to-violet-600",
-                bio: "Chief Human Resources Officer. Recognised by India Solar Week 2026 as Woman Leader in Clean Energy. Champion of inclusive workplace culture at Jupiter.",
-                badge: "CHRO",
+                bio: "CHRO and India Solar Week 2026 Women Leader in Clean Energy. Champion of inclusive workplace culture across all Jupiter facilities.",
               },
               {
-                initials: "VP", name: "VP Manufacturing",
+                name: "VP — Manufacturing",
+                role: "Head of Operations",
                 grad: "from-solar-500 to-amber-600",
-                bio: "Head of our Baddi flagship facility since its early days. Led the plant through every major technology upgrade from conventional cells to Mono PERC.",
-                badge: "Operations",
+                bio: "Head of our Baddi flagship facility. Led every major technology upgrade from conventional cells to Mono PERC since the plant's inception.",
               },
               {
-                initials: "CTO", name: "Chief Technology Officer",
+                name: "Chief Technology Officer",
+                role: "R&amp;D &amp; Technology",
                 grad: "from-leaf-500 to-teal-600",
-                bio: "Pioneer in Mono PERC adoption in India. Leading our next-generation R&D agenda, including TOPCon and Bhubaneswar facility technology stack.",
-                badge: "Technology",
+                bio: "Pioneer in Mono PERC adoption in India. Leading our next-generation R&amp;D agenda including TOPCon and the Bhubaneswar facility technology stack.",
               },
             ].map((m, i) => (
-              <motion.div key={i} {...fadeUp(i * 0.1)} className="card text-center py-8">
-                <div className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${m.grad} flex items-center justify-center text-white text-lg font-extrabold mx-auto mb-4 shadow-lg`}>
-                  {m.initials}
+              <motion.div key={i} {...fadeUp(i * 0.1)} className="card text-center py-8 flex flex-col items-center">
+                {/* Circular photo-style avatar */}
+                <div className={`w-24 h-24 rounded-full bg-gradient-to-br ${m.grad} flex items-center justify-center mx-auto mb-4 shadow-lg overflow-hidden flex-shrink-0`}>
+                  <svg viewBox="0 0 80 80" className="w-full h-full" aria-hidden="true">
+                    <circle cx="40" cy="28" r="15" fill="rgba(255,255,255,0.75)" />
+                    <path d="M10 80 Q10 52 40 52 Q70 52 70 80 Z" fill="rgba(255,255,255,0.75)" />
+                  </svg>
                 </div>
-                <span className="inline-block text-[10px] font-bold uppercase tracking-wider bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 px-2.5 py-0.5 rounded-full mb-2">
-                  {m.badge}
+                <span className="inline-block text-[10px] font-bold uppercase tracking-wider bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 px-2.5 py-0.5 rounded-full mb-2 leading-none">
+                  {m.role}
                 </span>
-                <h3 className="font-bold text-sm mb-2 leading-snug">{m.name}</h3>
+                <h3 className="font-bold text-sm mb-2 leading-snug px-1">{m.name}</h3>
                 <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">{m.bio}</p>
               </motion.div>
             ))}
@@ -313,15 +350,39 @@ export default function About() {
       </section>
 
       {/* ── Clientele ─────────────────────────────────────────────────── */}
-      <section className="py-20 px-6 bg-slate-50 dark:bg-slate-800/30 border-y border-slate-200/80 dark:border-slate-700/40">
+      <section className="py-20 px-6 bg-slate-50 dark:bg-slate-800/30 border-y border-slate-200/80 dark:border-slate-700/40 overflow-hidden">
         <div className="max-w-7xl mx-auto">
-          <motion.div {...fadeUp()} className="text-center mb-14">
+          <motion.div {...fadeUp()} className="text-center mb-12">
             <span className="inline-block text-xs font-bold uppercase tracking-widest text-leaf-600 dark:text-leaf-400 bg-leaf-50 dark:bg-leaf-900/20 px-3 py-1 rounded-full mb-4">Clientele</span>
             <h2 className="section-title">Trusted by India's <span className="leaf-text">Solar Leaders</span></h2>
             <p className="text-slate-500 dark:text-slate-400 mt-3 max-w-xl mx-auto text-sm">
-              Our cells power the projects of India's largest renewable energy developers, EPCs, and government utilities.
+              Our cells power the projects of India's largest module manufacturers, EPCs, and government utilities.
             </p>
           </motion.div>
+
+          {/* ── Scrolling marquee rows ──────────────────────────────── */}
+          <div className="space-y-4 mb-14">
+            {/* Row 1 — scrolls left */}
+            <div className="relative overflow-hidden">
+              <div className="flex gap-4 animate-marquee w-max">
+                {[...CLIENT_ROW_1, ...CLIENT_ROW_1].map((c, i) => (
+                  <ClientChip key={i} label={c.name} emoji={c.emoji} />
+                ))}
+              </div>
+              <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-slate-50 dark:from-slate-800/30 to-transparent z-10" />
+              <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-slate-50 dark:from-slate-800/30 to-transparent z-10" />
+            </div>
+            {/* Row 2 — scrolls right */}
+            <div className="relative overflow-hidden">
+              <div className="flex gap-4 animate-marquee-rev w-max">
+                {[...CLIENT_ROW_2, ...CLIENT_ROW_2].map((c, i) => (
+                  <ClientChip key={i} label={c.name} emoji={c.emoji} />
+                ))}
+              </div>
+              <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-slate-50 dark:from-slate-800/30 to-transparent z-10" />
+              <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-slate-50 dark:from-slate-800/30 to-transparent z-10" />
+            </div>
+          </div>
 
           {/* Testimonial */}
           <motion.div {...fadeUp(0.05)} className="card max-w-3xl mx-auto mb-12 text-center p-8">
@@ -333,45 +394,7 @@ export default function About() {
             <p className="text-xs text-slate-400">India's Leading Solar Module Manufacturer</p>
           </motion.div>
 
-          {/* Client categories */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              {
-                icon: "🏭", title: "Module Manufacturers",
-                color: "from-solar-500 to-amber-600",
-                clients: ["Waaree Energies", "Premier Energies", "Vikram Solar", "Adani Solar"],
-                desc: "India's leading module manufacturers rely on Jupiter cells for consistent performance and international certifications.",
-              },
-              {
-                icon: "🏛️", title: "Government & Utilities",
-                color: "from-navy-700 to-navy-500",
-                clients: ["SECI (Solar Energy Corporation)", "NTPC Renewable Energy", "State DISCOMs", "MNRE Projects"],
-                desc: "Public sector solar programmes and government-mandated projects use Jupiter-certified cells across utility-scale installations.",
-              },
-              {
-                icon: "🏗️", title: "EPC & Developers",
-                color: "from-leaf-500 to-teal-600",
-                clients: ["Leading EPC Companies", "Commercial Developers", "Industrial Rooftop", "Ground-Mount Projects"],
-                desc: "Engineering, procurement, and construction companies trust Jupiter cells for their reliability across India's diverse climate zones.",
-              },
-            ].map((cat, i) => (
-              <motion.div key={i} {...fadeUp(i * 0.1)} className="card">
-                <div className={`icon-box w-12 h-12 text-xl bg-gradient-to-br ${cat.color} mb-4 shadow-lg`}>{cat.icon}</div>
-                <h3 className="font-bold text-base mb-1">{cat.title}</h3>
-                <p className="text-slate-500 dark:text-slate-400 text-xs leading-relaxed mb-4">{cat.desc}</p>
-                <ul className="space-y-1.5">
-                  {cat.clients.map(c => (
-                    <li key={c} className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300">
-                      <span className="w-1.5 h-1.5 rounded-full bg-solar-400 flex-shrink-0" />
-                      {c}
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
-            ))}
-          </div>
-
-          <motion.div {...fadeUp(0.3)} className="text-center mt-10">
+          <motion.div {...fadeUp(0.3)} className="text-center mt-4">
             <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">Want to become a Jupiter International partner?</p>
             <Link to="/contact" className="inline-flex items-center gap-2 bg-solar-500 hover:bg-solar-600 text-white font-bold px-7 py-3 rounded-xl transition-all hover:shadow-glow-solar">
               Contact Our Sales Team →
