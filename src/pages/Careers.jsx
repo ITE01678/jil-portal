@@ -18,14 +18,13 @@ const CULTURE_PILLARS = [
 ];
 
 const OPENINGS = [
-  { title: "Finance Analyst",             dept: "Finance",     location: "Kolkata, WB",       type: "Full-Time", grad: "from-indigo-500 to-blue-600"   },
-  { title: "Finance & Taxation Manager",  dept: "Finance",     location: "Kolkata, WB",       type: "Full-Time", grad: "from-purple-500 to-indigo-600" },
-  { title: "Process Engineer",            dept: "Engineering", location: "Bhubaneswar, OD",   type: "Full-Time", grad: "from-leaf-500 to-teal-600"    },
-  { title: "Electrical Site Engineer",    dept: "Engineering", location: "Kolkata, WB",       type: "Full-Time", grad: "from-solar-500 to-amber-600"  },
-  { title: "Export / Import Specialist",  dept: "Operations",  location: "Kolkata, WB",       type: "Full-Time", grad: "from-cyan-500 to-blue-600"    },
-  { title: "Maintenance Technician",      dept: "Operations",  location: "Baddi, HP",         type: "Full-Time", grad: "from-rose-500 to-red-600"     },
-  { title: "Maintenance Engineer",        dept: "Engineering", location: "Bhubaneswar, OD",   type: "Full-Time", grad: "from-amber-500 to-orange-600" },
-  { title: "Quality Control Analyst",     dept: "Quality",     location: "Baddi, HP",         type: "Full-Time", grad: "from-emerald-500 to-green-600"},
+  { title: "Finance",                  dept: "Finance",     location: "Kolkata, West Bengal",     type: "Full-Time", grad: "from-indigo-500 to-blue-600"   },
+  { title: "Finance & Taxation",       dept: "Finance",     location: "Kolkata, West Bengal",     type: "Full-Time", grad: "from-purple-500 to-indigo-600" },
+  { title: "Process",                  dept: "Engineering", location: "Bhubaneswar, Odisha",      type: "Full-Time", grad: "from-leaf-500 to-teal-600"    },
+  { title: "Electrical Site Engineer", dept: "Engineering", location: "Kolkata, West Bengal",     type: "Full-Time", grad: "from-solar-500 to-amber-600"  },
+  { title: "Exim",                     dept: "Operations",  location: "Kolkata, West Bengal",     type: "Full-Time", grad: "from-cyan-500 to-blue-600"    },
+  { title: "Maintenance",              dept: "Operations",  location: "Baddi, Himachal Pradesh",  type: "Full-Time", grad: "from-rose-500 to-red-600"     },
+  { title: "Maintenance",              dept: "Operations",  location: "Bhubaneswar, Odisha",      type: "Full-Time", grad: "from-amber-500 to-orange-600" },
 ];
 
 const BENEFITS = [
@@ -63,6 +62,9 @@ export default function Careers() {
             <h1 className="text-5xl sm:text-6xl font-extrabold text-white leading-[1.1] tracking-tight mb-5 text-balance">
               Power the<br /><span className="solar-text drop-shadow-lg">Green Revolution.</span>
             </h1>
+            <p className="text-white/60 text-sm font-semibold uppercase tracking-widest mb-3">
+              Empowering People to Power the World
+            </p>
             <p className="text-lg text-white/70 leading-relaxed max-w-lg">
               Join Jupiter International Limited and help manufacture the solar cells that power a cleaner, greener planet. Build a career that matters.
             </p>

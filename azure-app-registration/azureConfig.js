@@ -206,7 +206,7 @@ export const graphRequest = {
     gradient: "from-fuchsia-500 to-pink-600",
     badge: "Culture",
     badgeColor: "bg-fuchsia-100 text-fuchsia-700 dark:bg-fuchsia-950/50 dark:text-fuchsia-400",
-    iframeSrc: "",
+    iframeSrc: "https://forms.office.com/r/erAqsRtrbW",
   },
 ];
 

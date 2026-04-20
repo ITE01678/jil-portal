@@ -205,6 +205,31 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── Company Video ─────────────────────────────────────────────────────── */}
+      <section className="py-20 px-6 bg-navy-950">
+        <div className="max-w-4xl mx-auto">
+          <motion.div {...fadeUp()} className="text-center mb-10">
+            <span className="inline-block text-xs font-bold uppercase tracking-widest text-solar-400 bg-solar-900/20 px-3 py-1 rounded-full mb-4">Company Video</span>
+            <h2 className="text-3xl font-extrabold tracking-tight text-white mb-3">
+              Energising the Present,{" "}
+              <span className="solar-text">Illuminating the Future.</span>
+            </h2>
+            <p className="text-white/60 text-sm max-w-lg mx-auto">
+              A glimpse into Jupiter International's world-class solar cell manufacturing at Baddi — precision, scale, and India's clean energy mission.
+            </p>
+          </motion.div>
+          <motion.div {...fadeUp(0.1)} className="rounded-2xl overflow-hidden shadow-2xl aspect-video">
+            <iframe
+              src="https://www.youtube.com/embed/RXL3Bv2SaGc"
+              title="Jupiter International Limited — Energising the Present, Illuminating the Future"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              className="w-full h-full"
+            />
+          </motion.div>
+        </div>
+      </section>
+
       {/* ── Manufacturing teaser ─────────────────────────────────────── */}
       <section className="py-20 px-6 bg-slate-50 dark:bg-slate-800/30 border-y border-slate-200/80 dark:border-slate-700/40">
         <div className="max-w-7xl mx-auto">

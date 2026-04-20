@@ -25,11 +25,13 @@ const TEAM = [
 ];
 
 const MILESTONES = [
-  { year: "2009", event: "Founded in Kolkata. Commissioned our first 30 MW solar cell manufacturing line in Baddi, Himachal Pradesh." },
-  { year: "2015", event: "First major capacity expansion to 200 MW. Secured TÜV Rheinland plant certification and SGS quality accreditation." },
-  { year: "2019", event: "Adopted Mono PERC technology — crossed 500 MW installed capacity. Received Fraunhofer ISE product certification." },
-  { year: "2023", event: "Reached 0.96 GW of operational capacity at Baddi. Announced 800 MW expansion and Bhubaneswar joint venture." },
-  { year: "2025", event: "Commissioning Bhubaneswar facility with 4 GW cells + 2.8 GW modules — targeting 4.96 GW combined national capacity." },
+  { year: "2009", event: "Founded and commissioned first 30 MW solar cell manufacturing line in Baddi, Himachal Pradesh — the start of India's solar manufacturing revolution." },
+  { year: "2015", event: "Expanded capacity to 200 MW. Secured TÜV Rheinland plant certification and SGS quality accreditation, establishing international quality benchmarks." },
+  { year: "2017", event: "Recognised by Ministry of New & Renewable Energy as 'Leading RE Manufacturer (Solar Cells)' at REI Expo 2017 — India's largest renewable energy platform." },
+  { year: "2019", event: "Adopted Mono PERC technology, crossing 500 MW installed capacity. Received Fraunhofer ISE product certification and second MoNRE recognition at REI Expo 2019." },
+  { year: "2023", event: "Reached 0.96 GW operational capacity at Baddi. Announced 800 MW expansion and landmark Bhubaneswar joint venture — a ₹6,500 Crore integrated solar manufacturing project." },
+  { year: "2024", event: "Secured ₹300 Crore + ₹500 Crore investments from ValueQuest. Won Renewable Energy Manufacturing Excellence Award at REI Expo 2024 and multiple Green Urja Awards." },
+  { year: "2025", event: "Commissioning Bhubaneswar 4 GW cell + 2.8 GW module facility. Swept 3 wins at India Solar Week 2026 — Technology of Year, Project of Year, and Women Leader in Clean Energy." },
 ];
 
 export default function About() {
@@ -247,7 +249,7 @@ export default function About() {
               {
                 initials: "MD", name: "Founder & MD",
                 grad: "from-navy-700 to-navy-500",
-                bio: "Visionary entrepreneur who founded Jupiter International in 2009 with 30 MW and scaled it to 0.96 GW — driving India's solar manufacturing revolution.",
+                bio: "Visionary founder who built Jupiter International from a 30 MW startup in 2009 to India's largest pure-play solar cell manufacturer at 0.96 GW — driving India's solar manufacturing revolution.",
                 badge: "Executive Leadership",
               },
               {
