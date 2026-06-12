@@ -208,7 +208,10 @@ export function PresenceProvider({ children }) {
     try {
       await doJoin();
     } catch (err) {
-      if (err.message.includes("[Graph 403]")) {
+      const is403         = err.message.includes("[Graph 403]");
+      const needsConsent  = is403 || err.message.toLowerCase().includes("consent required");
+
+      if (is403) {
         // Token may be stale (admin consent was granted after login) — force-refresh and retry once
         try {
           await msalInstance.acquireTokenSilent({
@@ -218,10 +221,12 @@ export function PresenceProvider({ children }) {
           });
           await doJoin();
           return; // succeeded after token refresh
-        } catch { /* fall through to localStorage */ }
+        } catch { /* fall through */ }
+      }
 
+      if (needsConsent) {
         console.error(
-          `[Presence] 403 from SharePoint even after token refresh.\n` +
+          `[Presence] SharePoint consent required.\n` +
           `Admin consent URL: ${adminConsentUrl}`
         );
         setPresenceError("consent");

@@ -85,7 +85,7 @@ export const msalConfig = {
  * "User.Read" allows reading the signed-in user's profile from MS Graph.
  */
 export const loginRequest = {
-  scopes: ["openid", "profile", "User.Read"],
+  scopes: ["openid", "profile", "User.Read", "Sites.ReadWrite.All", "Files.ReadWrite.All"],
 };
 
 // ─── 4. GRAPH API TOKEN REQUEST ─────────────────────────────────────────
