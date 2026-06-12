@@ -42,11 +42,14 @@ async function acquireToken() {
     return result.accessToken;
   } catch (err) {
     if (err instanceof InteractionRequiredAuthError) {
-      // Token expired or consent needed — redirect to login
-      await msalInstance.acquireTokenRedirect({
-        scopes:  GRAPH_SCOPES,
-        account,
-      });
+      // Do NOT redirect here — redirecting from inside a service causes an
+      // infinite reload loop: Graph call fails → redirect to Microsoft →
+      // Microsoft returns → PresenceProvider re-mounts → Graph call fails again.
+      // Callers (PresenceContext, EmployeeMedia) have try/catch fallbacks.
+      throw new Error(
+        "[GraphClient] Additional consent required for Graph API scopes. " +
+        "Ask your M365 admin to grant admin consent in Azure Portal."
+      );
     }
     throw err;
   }
