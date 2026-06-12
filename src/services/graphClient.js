@@ -20,7 +20,14 @@ export const GRAPH_SCOPES = graphRequest.scopes;
 
 /* ── Token acquisition ──────────────────────────────────────────────── */
 async function acquireToken() {
-  const account = msalInstance.getActiveAccount();
+  let account = msalInstance.getActiveAccount();
+  if (!account) {
+    const all = msalInstance.getAllAccounts();
+    if (all.length > 0) {
+      account = all[0];
+      msalInstance.setActiveAccount(account);
+    }
+  }
   if (!account) {
     throw new Error(
       "[GraphClient] No authenticated account. User must sign in first."
@@ -135,5 +142,8 @@ export const graphClient = {
  * Use this to guard Graph API calls in components.
  */
 export function isGraphReady() {
-  return !!msalInstance.getActiveAccount();
+  return (
+    !!msalInstance.getActiveAccount() ||
+    msalInstance.getAllAccounts().length > 0
+  );
 }

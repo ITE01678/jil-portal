@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useIsAuthenticated } from "@azure/msal-react";
 import { MediaService } from "../../services/mediaService";
-import { isGraphReady } from "../../services/graphClient";
 import { SHAREPOINT_CONFIG } from "../../../azure-app-registration/sharepointConfig";
 
 const DRIVE_READY =
@@ -17,11 +17,31 @@ const MEDIA_FOLDERS = [
   { key: "activities", icon: "🌿", label: "Activities", color: "from-leaf-500 to-teal-600",     desc: "CSR & celebration moments"       },
 ];
 
-function MediaModal({ folder, files, loading, lightboxImages, lightboxIdx, setLightboxIdx, onClose, canUpload, onUpload, uploadProgress }) {
+function TrashIcon() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="3 6 5 6 21 6"/>
+      <path d="M19 6l-1 14H6L5 6"/>
+      <path d="M10 11v6M14 11v6"/>
+      <path d="M9 6V4h6v2"/>
+    </svg>
+  );
+}
+
+function MediaModal({
+  folder, files, loading,
+  lightboxImages, lightboxIdx, setLightboxIdx,
+  onClose, canUpload, onUpload, uploadProgress,
+  onDelete, confirmDeleteId, setConfirmDeleteId,
+}) {
   if (!folder) return null;
+
   return (
     <>
-      <div className="fixed inset-0 z-50 flex flex-col" style={{ background: "rgba(5,10,20,0.97)" }}>
+      {/* ── Full-screen browser — z-[100] sits above the z-50 header ── */}
+      <div className="fixed inset-0 z-[100] flex flex-col" style={{ background: "rgba(5,10,20,0.97)" }}>
+
         {/* Header */}
         <div className="flex items-center gap-3 px-5 py-3 bg-slate-900 border-b border-slate-700/60 flex-shrink-0">
           <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${folder.color} flex items-center justify-center text-xl flex-shrink-0 shadow-lg`}>
@@ -56,7 +76,7 @@ function MediaModal({ folder, files, loading, lightboxImages, lightboxIdx, setLi
         )}
 
         {/* File grid */}
-        <div className="flex-1 overflow-y-auto p-5">
+        <div className="flex-1 overflow-y-auto p-5" onClick={() => setConfirmDeleteId(null)}>
           {loading ? (
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
               {Array.from({ length: 12 }).map((_, i) => (
@@ -82,37 +102,75 @@ function MediaModal({ folder, files, loading, lightboxImages, lightboxIdx, setLi
                 const isVideo = file.mimeType?.startsWith("video/");
                 const thumb   = file.thumbnailMd || file.thumbnailSm;
                 const imgIdx  = isImage ? lightboxImages.findIndex(f => f.id === file.id) : -1;
+                const isConfirming = confirmDeleteId === file.id;
+
                 return (
-                  <motion.button
+                  <motion.div
                     key={file.id}
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: Math.min(idx * 0.015, 0.4) }}
-                    onClick={() => imgIdx !== -1 ? setLightboxIdx(imgIdx) : window.open(file.webUrl || file.downloadUrl, "_blank")}
-                    className="group relative aspect-square rounded-xl overflow-hidden bg-slate-800 hover:ring-2 hover:ring-indigo-400/80 transition-all duration-200 focus:outline-none"
-                    title={file.name}
+                    className="group relative aspect-square rounded-xl overflow-hidden bg-slate-800"
                   >
-                    {isImage && thumb ? (
-                      <img src={thumb} alt={file.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
-                    ) : isVideo ? (
-                      <div className="w-full h-full flex items-center justify-center bg-slate-900 relative">
-                        {thumb && <img src={thumb} alt="" className="absolute inset-0 w-full h-full object-cover opacity-40" />}
-                        <div className="relative z-10 w-12 h-12 rounded-full bg-black/70 backdrop-blur flex items-center justify-center shadow-lg">
-                          <span className="text-white text-xl pl-0.5">▶</span>
+                    {/* Clickable media area */}
+                    <button
+                      onClick={() => imgIdx !== -1
+                        ? setLightboxIdx(imgIdx)
+                        : window.open(file.webUrl || file.downloadUrl, "_blank")}
+                      className="w-full h-full focus:outline-none"
+                      title={file.name}
+                    >
+                      {isImage && thumb ? (
+                        <img src={thumb} alt={file.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+                      ) : isVideo ? (
+                        <div className="w-full h-full flex items-center justify-center bg-slate-900 relative">
+                          {thumb && <img src={thumb} alt="" className="absolute inset-0 w-full h-full object-cover opacity-40" />}
+                          <div className="relative z-10 w-12 h-12 rounded-full bg-black/70 backdrop-blur flex items-center justify-center shadow-lg">
+                            <span className="text-white text-xl pl-0.5">▶</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="w-full h-full flex flex-col items-center justify-center gap-1.5 text-slate-500 px-2">
+                          <span className="text-3xl">📄</span>
+                          <span className="text-[9px] text-center truncate w-full">{file.name}</span>
+                        </div>
+                      )}
+                    </button>
+
+                    {/* Hover overlay: filename + delete */}
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 to-transparent py-2 px-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-end justify-between gap-1">
+                      <p className="text-white text-[9px] truncate flex-1">{file.name}</p>
+                      {canUpload && !isConfirming && (
+                        <button
+                          onClick={e => { e.stopPropagation(); setConfirmDeleteId(file.id); }}
+                          className="flex-shrink-0 w-6 h-6 rounded bg-white/10 hover:bg-red-500 text-white flex items-center justify-center transition-colors"
+                          title="Delete file"
+                        >
+                          <TrashIcon />
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Delete confirmation overlay */}
+                    {isConfirming && (
+                      <div
+                        className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center gap-2 p-2"
+                        onClick={e => e.stopPropagation()}
+                      >
+                        <p className="text-white text-[10px] font-semibold text-center leading-tight">Delete this file?</p>
+                        <div className="flex gap-1.5">
+                          <button
+                            onClick={e => { e.stopPropagation(); onDelete(file.id); }}
+                            className="px-2.5 py-1 rounded bg-red-600 hover:bg-red-500 text-white text-[10px] font-bold transition-colors"
+                          >Delete</button>
+                          <button
+                            onClick={e => { e.stopPropagation(); setConfirmDeleteId(null); }}
+                            className="px-2.5 py-1 rounded bg-white/20 hover:bg-white/30 text-white text-[10px] font-bold transition-colors"
+                          >Cancel</button>
                         </div>
                       </div>
-                    ) : (
-                      <div className="w-full h-full flex flex-col items-center justify-center gap-1.5 text-slate-500 px-2">
-                        <span className="text-3xl">📄</span>
-                        <span className="text-[9px] text-center truncate w-full">{file.name}</span>
-                      </div>
                     )}
-                    {(isImage || isVideo) && (
-                      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent py-2 px-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                        <p className="text-white text-[9px] truncate">{file.name}</p>
-                      </div>
-                    )}
-                  </motion.button>
+                  </motion.div>
                 );
               })}
             </div>
@@ -120,12 +178,12 @@ function MediaModal({ folder, files, loading, lightboxImages, lightboxIdx, setLi
         </div>
       </div>
 
-      {/* Lightbox */}
+      {/* ── Lightbox — z-[110] sits above the modal ── */}
       <AnimatePresence>
         {lightboxIdx !== null && lightboxImages.length > 0 && (
           <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[60] bg-black/97 flex items-center justify-center"
+            className="fixed inset-0 z-[110] bg-black/97 flex items-center justify-center"
             onClick={() => setLightboxIdx(null)}
           >
             {lightboxImages.length > 1 && (
@@ -164,22 +222,26 @@ function MediaModal({ folder, files, loading, lightboxImages, lightboxIdx, setLi
 }
 
 export default function EmployeeMedia() {
-  const [activeFolderKey, setActiveFolderKey] = useState(null);
-  const [folderFiles,     setFolderFiles]     = useState([]);
-  const [folderLoading,   setFolderLoading]   = useState(false);
-  const [lightboxIdx,     setLightboxIdx]     = useState(null);
-  const [uploadProgress,  setUploadProgress]  = useState(null);
+  const isAuthenticated = useIsAuthenticated();
+
+  const [activeFolderKey,  setActiveFolderKey]  = useState(null);
+  const [folderFiles,      setFolderFiles]      = useState([]);
+  const [folderLoading,    setFolderLoading]    = useState(false);
+  const [lightboxIdx,      setLightboxIdx]      = useState(null);
+  const [uploadProgress,   setUploadProgress]   = useState(null);
+  const [confirmDeleteId,  setConfirmDeleteId]  = useState(null);
   const uploadInputRef = useRef(null);
 
   const activeFolder   = MEDIA_FOLDERS.find(f => f.key === activeFolderKey) ?? null;
   const lightboxImages = folderFiles.filter(f => f.mimeType?.startsWith("image/"));
-  const canUpload      = isGraphReady();
+  const canUpload      = isAuthenticated && DRIVE_READY;
 
   const openFolder = useCallback(async (key) => {
     setActiveFolderKey(key);
     setFolderFiles([]);
     setLightboxIdx(null);
-    if (!DRIVE_READY || !isGraphReady()) { setFolderLoading(false); return; }
+    setConfirmDeleteId(null);
+    if (!DRIVE_READY) { setFolderLoading(false); return; }
     setFolderLoading(true);
     try {
       const files = await MediaService.listFolder(key, true);
@@ -193,6 +255,7 @@ export default function EmployeeMedia() {
     setFolderFiles([]);
     setLightboxIdx(null);
     setUploadProgress(null);
+    setConfirmDeleteId(null);
   }, []);
 
   const triggerUpload = useCallback(() => uploadInputRef.current?.click(), []);
@@ -213,14 +276,22 @@ export default function EmployeeMedia() {
     finally { setUploadProgress(null); }
   }, [activeFolderKey]);
 
+  const handleDelete = useCallback(async (fileId) => {
+    setConfirmDeleteId(null);
+    try {
+      await MediaService.delete(fileId);
+      setFolderFiles(prev => prev.filter(f => f.id !== fileId));
+    } catch { }
+  }, []);
+
   useEffect(() => {
     const handler = (e) => {
       if (lightboxIdx !== null) {
         if (e.key === "ArrowRight") setLightboxIdx(i => (i + 1) % lightboxImages.length);
         if (e.key === "ArrowLeft")  setLightboxIdx(i => (i - 1 + lightboxImages.length) % lightboxImages.length);
         if (e.key === "Escape")     setLightboxIdx(null);
-      } else if (activeFolderKey && e.key === "Escape") {
-        closeFolder();
+      } else if (activeFolderKey) {
+        if (e.key === "Escape") closeFolder();
       }
     };
     window.addEventListener("keydown", handler);
@@ -234,7 +305,7 @@ export default function EmployeeMedia() {
           Media Library
         </h1>
         <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
-          Upload and browse company media — photos, videos, and documents.
+          Upload, browse, and manage company media — photos, videos, and documents.
         </p>
       </div>
 
@@ -289,6 +360,9 @@ export default function EmployeeMedia() {
             canUpload={canUpload}
             onUpload={triggerUpload}
             uploadProgress={uploadProgress}
+            onDelete={handleDelete}
+            confirmDeleteId={confirmDeleteId}
+            setConfirmDeleteId={setConfirmDeleteId}
           />
         )}
       </AnimatePresence>
