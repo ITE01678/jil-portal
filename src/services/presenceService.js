@@ -110,7 +110,7 @@ export const PresenceService = {
    */
   async getActive() {
     const items = await graphClient.getAll(
-      itemsUrl("$filter=fields/IsActive eq 1&$orderby=fields/LastSeen desc")
+      itemsUrl("$filter=fields/IsActive eq true")
     );
 
     const now = Date.now();
@@ -135,7 +135,8 @@ export const PresenceService = {
           status,
         };
       })
-      .filter(u => u.status !== "offline");
+      .filter(u => u.status !== "offline")
+      .sort((a, b) => a.lastSeenMs - b.lastSeenMs);
   },
 
   /**
@@ -145,7 +146,7 @@ export const PresenceService = {
   async pruneStale() {
     const cutoff = new Date(Date.now() - STALE_WINDOW_MS).toISOString();
     const stale  = await graphClient.getAll(
-      itemsUrl(`$filter=fields/IsActive eq 1 and fields/LastSeen lt '${cutoff}'`)
+      itemsUrl(`$filter=fields/IsActive eq true and fields/LastSeen lt '${cutoff}'`)
     );
     await Promise.allSettled(
       stale.map(item =>

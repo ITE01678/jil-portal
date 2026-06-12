@@ -52,8 +52,9 @@ const SOCIALS = [
   { Icon: MailIcon,      label: "Email",    href: "mailto:info@jil-jupiter.com", color: "hover:bg-solar-500 hover:text-white" },
 ];
 
-export default function FloatingSidebar() {
+export default function FloatingSidebar({ isEmployee = false }) {
   const [hovered, setHovered] = useState(null);
+  const visibleSocials = SOCIALS.filter(s => isEmployee || s.label !== "SAP");
 
   return (
     <motion.div
@@ -82,7 +83,7 @@ export default function FloatingSidebar() {
         <div className="w-6 h-px bg-slate-200 dark:bg-slate-700" />
 
         {/* Icons */}
-        {SOCIALS.map(({ Icon, label, href, color }, i) => (
+        {visibleSocials.map(({ Icon, label, href, color }, i) => (
           <motion.a
             key={label}
             href={href}

@@ -35,7 +35,7 @@ export default function EmployeeLayout() {
         </div>
       </div>
       <Chatbot />
-      <FloatingSidebar />
+      <FloatingSidebar isEmployee />
     </PresenceProvider>
   );
 }
