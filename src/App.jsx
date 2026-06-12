@@ -19,6 +19,7 @@ import Dashboard      from "./pages/employee/Dashboard";
 import FormsHub       from "./pages/employee/FormsHub";
 import TeamsChat      from "./pages/employee/TeamsChat";
 import FunZone        from "./pages/employee/FunZone";
+import EmployeeMedia  from "./pages/employee/EmployeeMedia";
 import Infrastructure from "./pages/Infrastructure";
 
 export default function App() {
@@ -49,6 +50,7 @@ export default function App() {
           <Route path="/employee/forms"          element={<FormsHub />}       />
           <Route path="/employee/chat"           element={<TeamsChat />}      />
           <Route path="/employee/fun"            element={<FunZone />}        />
+          <Route path="/employee/media"          element={<EmployeeMedia />}  />
           <Route path="/employee/infrastructure" element={<Infrastructure />} />
         </Route>
 

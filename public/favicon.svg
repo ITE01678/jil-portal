@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Deep navy background matching brand -->
+  <rect width="64" height="64" rx="10" fill="#071540"/>
+
+  <!-- ── Blue solar-panel / logo mark (left side) ── -->
+  <!-- Large blue L-shape / panel group -->
+  <rect x="6"  y="6"  width="22" height="14" rx="2.5" fill="#0061AF"/>
+  <!-- Inner grid lines on blue panel -->
+  <line x1="6"  y1="13" x2="28" y2="13" stroke="#003d6e" stroke-width="1"/>
+  <line x1="17" y1="6"  x2="17" y2="20" stroke="#003d6e" stroke-width="1"/>
+  <!-- Second blue panel below-left -->
+  <rect x="6"  y="22" width="10" height="10" rx="2" fill="#0061AF"/>
+  <line x1="6"  y1="27" x2="16" y2="27" stroke="#003d6e" stroke-width="0.8"/>
+  <!-- Accent: bright blue highlight on top panel -->
+  <rect x="7" y="7" width="10" height="6" rx="1.5" fill="#2d74cc"/>
+
+  <!-- ── Green staircase squares (right + bottom) ── -->
+  <!-- Row 4 (top) — 1 square, darkest -->
+  <rect x="42" y="14" width="10" height="10" rx="2" fill="#5a8a10"/>
+  <!-- Row 3 — 2 squares -->
+  <rect x="30" y="26" width="10" height="10" rx="2" fill="#7aaa1c"/>
+  <rect x="42" y="26" width="10" height="10" rx="2" fill="#7aaa1c"/>
+  <!-- Row 2 — 3 squares -->
+  <rect x="18" y="38" width="10" height="10" rx="2" fill="#8fc020"/>
+  <rect x="30" y="38" width="10" height="10" rx="2" fill="#9dce28"/>
+  <rect x="42" y="38" width="10" height="10" rx="2" fill="#A6CE39"/>
+  <!-- Row 1 (bottom) — 4 squares, brightest -->
+  <rect x="6"  y="50" width="10" height="8"  rx="2" fill="#A6CE39"/>
+  <rect x="18" y="50" width="10" height="8"  rx="2" fill="#b8dc4a"/>
+  <rect x="30" y="50" width="10" height="8"  rx="2" fill="#c4e455"/>
+  <rect x="42" y="50" width="10" height="8"  rx="2" fill="#c4e455"/>
+</svg>

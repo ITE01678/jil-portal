@@ -24,10 +24,14 @@ function FacebookIcon() {
     </svg>
   );
 }
-function TwitterXIcon() {
+function SAPIcon() {
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+    <svg width="18" height="18" viewBox="0 0 32 32" fill="none">
+      <rect width="32" height="32" rx="5" fill="currentColor" fillOpacity="0.15"/>
+      <text x="16" y="21" textAnchor="middle" fill="currentColor"
+            fontFamily="Arial,sans-serif" fontWeight="900" fontSize="11" letterSpacing="0.5">
+        SAP
+      </text>
     </svg>
   );
 }
@@ -44,7 +48,7 @@ const SOCIALS = [
   { Icon: LinkedInIcon,  label: "LinkedIn", href: "https://www.linkedin.com/company/jil-jupiter/",        color: "hover:bg-[#0077b5] hover:text-white" },
   { Icon: YouTubeIcon,   label: "YouTube",  href: "https://www.youtube.com/@Jupiter.international",         color: "hover:bg-[#ff0000] hover:text-white" },
   { Icon: FacebookIcon,  label: "Facebook", href: "https://www.facebook.com/people/Jupiter-International-Limited/61565473688219/?mibextid=LQQJ4d&rdid=WuWupAQjGuxWIqT5&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2FMnNweyQA8r6YwNDT%2F%3Fmibextid%3DLQQJ4d",        color: "hover:bg-[#1877f2] hover:text-white" },
-  { Icon: TwitterXIcon,  label: "X",        href: "https://twitter.com",         color: "hover:bg-black hover:text-white"     },
+  { Icon: SAPIcon,       label: "SAP",        href: "https://my428678.s4hana.cloud.sap/",         color: "hover:bg-[#0070f2] hover:text-white" },
   { Icon: MailIcon,      label: "Email",    href: "mailto:info@jil-jupiter.com", color: "hover:bg-solar-500 hover:text-white" },
 ];
 

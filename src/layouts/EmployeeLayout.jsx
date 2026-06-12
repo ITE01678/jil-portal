@@ -4,6 +4,7 @@ import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
 import Chatbot from "../components/Chatbot";
+import FloatingSidebar from "../components/FloatingSidebar";
 import { PresenceProvider } from "../contexts/PresenceContext";
 
 export default function EmployeeLayout() {
@@ -34,6 +35,7 @@ export default function EmployeeLayout() {
         </div>
       </div>
       <Chatbot />
+      <FloatingSidebar />
     </PresenceProvider>
   );
 }
