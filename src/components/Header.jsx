@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
+import { useMsal } from "@azure/msal-react";
 import ThemeToggle from "./ThemeToggle";
 import OnlineUsers from "./OnlineUsers";
 import { JupiterLogoIcon } from "./JupiterLogo";
@@ -43,6 +44,80 @@ const navLinkClass = ({ isActive }) =>
       ? "bg-jilBlue-50 dark:bg-jilBlue-900/20 text-jilBlue-500 dark:text-jilBlue-300 font-semibold"
       : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200"
   }`;
+
+function ProfileMenu() {
+  const { instance, accounts } = useMsal();
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+  const account = accounts[0];
+
+  useEffect(() => {
+    function handler(e) {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    }
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  if (!account) return null;
+
+  const initials = account.name
+    ? account.name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2)
+    : (account.username ?? "?").slice(0, 2).toUpperCase();
+
+  const handleLogout = () => {
+    instance.logoutRedirect({ postLogoutRedirectUri: "/" });
+  };
+
+  return (
+    <div ref={ref} className="relative flex-shrink-0">
+      <button
+        onClick={() => setOpen(o => !o)}
+        aria-label="Profile menu"
+        className="w-9 h-9 rounded-full bg-gradient-to-br from-[#0061AF] to-indigo-700 flex items-center justify-center text-white text-xs font-bold hover:ring-2 hover:ring-[#0061AF]/60 transition-all duration-200 select-none"
+      >
+        {initials}
+      </button>
+
+      {open && (
+        <div className="absolute right-0 top-full mt-2 w-64 bg-white dark:bg-[#010c1e] rounded-2xl shadow-xl border border-slate-200 dark:border-[#0f2035]/90 overflow-hidden animate-fade-up z-50">
+          {/* User info */}
+          <div className="p-4 border-b border-slate-200 dark:border-slate-700/60">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#0061AF] to-indigo-700 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
+                {initials}
+              </div>
+              <div className="min-w-0">
+                <p className="font-semibold text-sm text-slate-900 dark:text-white truncate">
+                  {account.name || "Employee"}
+                </p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                  {account.username}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="p-1.5">
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-150"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                <polyline points="16 17 21 12 16 7"/>
+                <line x1="21" y1="12" x2="9" y2="12"/>
+              </svg>
+              Sign Out
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function Header({ isPublic, onToggleSidebar }) {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -150,6 +225,7 @@ export default function Header({ isPublic, onToggleSidebar }) {
           </nav>
           {/* Online users — only shown inside PresenceProvider (employee layout) */}
           <OnlineUsers />
+          <ProfileMenu />
         </>
       )}
 
