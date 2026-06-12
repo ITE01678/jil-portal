@@ -20,6 +20,12 @@ export default function AuthGuard({ children }) {
   const isAuthenticated = useIsAuthenticated();
 
   const handleLogin = () => {
+    // Save the current route so PostAuthRedirect can navigate back after auth
+    const base = (import.meta.env.BASE_URL ?? "/").replace(/\/$/, "");
+    const routePath = window.location.pathname.startsWith(base)
+      ? window.location.pathname.slice(base.length) || "/"
+      : window.location.pathname;
+    sessionStorage.setItem("auth-redirect-to", routePath);
     instance.loginRedirect(loginRequest).catch(console.error);
   };
 

@@ -1,7 +1,29 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useEffect } from "react";
+import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+import { useMsal, useIsAuthenticated } from "@azure/msal-react";
+import { InteractionStatus } from "@azure/msal-browser";
 import PublicLayout    from "./layouts/PublicLayout";
 import EmployeeLayout  from "./layouts/EmployeeLayout";
 import AuthGuard       from "./auth/AuthGuard";
+
+/* After MSAL redirect auth completes, navigate to the route the user was on */
+function PostAuthRedirect() {
+  const { inProgress } = useMsal();
+  const isAuthenticated = useIsAuthenticated();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isAuthenticated && inProgress === InteractionStatus.None) {
+      const dest = sessionStorage.getItem("auth-redirect-to");
+      if (dest) {
+        sessionStorage.removeItem("auth-redirect-to");
+        navigate(dest, { replace: true });
+      }
+    }
+  }, [isAuthenticated, inProgress, navigate]);
+
+  return null;
+}
 
 /* ── Public pages (no login required) ─────────────────────────────── */
 import Home              from "./pages/Home";
@@ -25,6 +47,7 @@ import Infrastructure from "./pages/Infrastructure";
 export default function App() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
+      <PostAuthRedirect />
       <Routes>
 
         {/* ── PUBLIC — accessible by everyone, no auth ─────────────── */}

@@ -55,7 +55,7 @@ export const msalConfig = {
     authority:              `https://login.microsoftonline.com/${AZURE_CREDENTIALS.tenantId}`,
     redirectUri:            AZURE_CREDENTIALS.redirectUri,
     postLogoutRedirectUri:  AZURE_CREDENTIALS.redirectUri,
-    navigateToLoginRequestUrl: true,
+    navigateToLoginRequestUrl: false,
   },
   cache: {
     /**

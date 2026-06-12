@@ -8,6 +8,19 @@
   <title>Jupiter LuminoSphere — Employee Portal</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
+  <!-- Restore path saved by 404.html (GitHub Pages SPA deep-link trick) -->
+  <script>
+    (function () {
+      var r = sessionStorage.getItem("gh-pages-redirect");
+      if (r) {
+        sessionStorage.removeItem("gh-pages-redirect");
+        try {
+          var u = new URL(r);
+          window.history.replaceState(null, "", u.pathname + u.search + u.hash);
+        } catch (_) {}
+      }
+    }());
+  </script>
 </head>
 <body>
   <div id="root"></div>
